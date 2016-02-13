@@ -1,6 +1,6 @@
 defmodule Proxy.Router do
   use Plug.Router
-  alias Proxy.HttpHandler
+  alias Proxy.{HttpHandler, HttpsHandler}
   require Logger
 
   plug Plug.Logger
@@ -18,10 +18,7 @@ defmodule Proxy.Router do
   end
 
   defp handle_request(%Plug.Conn{method: "CONNECT"} = conn) do
-    IO.puts "woweee"
-    conn
-    |> send_resp(200, "https :)")
-    |> halt
+    HttpsHandler.handle_request(conn)
   end
 
   defp handle_request(conn) do
