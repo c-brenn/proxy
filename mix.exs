@@ -24,7 +24,8 @@ defmodule Proxy.Mixfile do
       [
         :logger,
         :cowboy,
-        :plug
+        :plug,
+        :httpoison
       ],
       mod: {Proxy, []}
     ]
@@ -41,8 +42,9 @@ defmodule Proxy.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:cowboy, "~> 1.0.4"},
-      {:plug,   "~> 1.1.0"}
+      {:cowboy,    "~> 1.0.4"},
+      {:plug,      "~> 1.1.0"},
+      {:httpoison, "~> 0.8.0"}
     ]
   end
 end
