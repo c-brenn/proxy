@@ -6,7 +6,8 @@ defmodule Proxy do
 
     children = [
       worker(Proxy.Router, []),
-      worker(Proxy.Blacklist, [])
+      worker(Proxy.Blacklist, []),
+      supervisor(Task.Supervisor, [[name: Proxy.SSLSupervisor]])
     ]
 
     opts = [strategy: :one_for_one, name: Proxy.Supervisor]

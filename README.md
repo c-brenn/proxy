@@ -1,9 +1,9 @@
 # Proxy
 
-A simple HTTP proxy in Elixir, written for a college assignment.
+A simple HTTP proxy in Elixir, written for a college assignment, that can handle
+HTTP and HTTPS.
 
-At the time of writing, it does not conform to RFC standard yet and only
-supports HTTP requests.
+At the time of writing, it does not conform to RFC standard.
 
 ## Installation
 

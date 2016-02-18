@@ -25,8 +25,7 @@ defmodule Proxy.Mixfile do
         :logger,
         :cowboy,
         :plug,
-        :httpoison,
-        :socket
+        :httpoison
       ],
       mod: {Proxy, []}
     ]
@@ -44,9 +43,8 @@ defmodule Proxy.Mixfile do
   defp deps do
     [
       {:cowboy,    "~> 1.0.4"},
-      {:plug,      "~> 1.1.0"},
-      {:httpoison, "~> 0.8.0"},
-      {:socket,    "~> 0.3.0"}
+      {:plug,      "~> 1.1.1"},
+      {:httpoison, "~> 0.8.0"}
     ]
   end
 end
