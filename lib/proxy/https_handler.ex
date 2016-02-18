@@ -1,12 +1,21 @@
 defmodule Proxy.HttpsHandler do
+  import Plug.Conn
 
-  def handle_request(conn) do
+  def init(opts), do: opts
+
+  def call(%Plug.Conn{method: "CONNECT"} = conn, _opts) do
+    handle_https_request(conn)
+  end
+  def call(conn, _opts), do: conn
+
+  def handle_https_request(conn) do
     conn
     |> open_tunnel
     |> stream_data
     |> close_tunnel
 
     %{conn | state: :sent}
+    |> halt
   end
 
   defp open_tunnel(conn) do
