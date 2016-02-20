@@ -1,6 +1,6 @@
 defmodule Proxy.CacheLookup do
   import Plug.Conn
-  alias Proxy.{Cache, Tools}
+  alias Proxy.{Cache, Shared}
   require Logger
 
   def init(opts), do: opts
@@ -41,7 +41,7 @@ defmodule Proxy.CacheLookup do
     Logger.info("CACHE -- HIT -- #{conn.assigns.url}")
 
     %{body: body, headers: headers, status_code: status_code} = conn.assigns.response
-    headers = Tools.alter_resp_headers(headers)
+    headers = Shared.alter_resp_headers(headers)
     %{conn| resp_headers: headers}
     |> send_resp(status_code, body)
     |> halt
