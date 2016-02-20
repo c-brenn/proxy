@@ -6,41 +6,44 @@ defmodule Proxy.HttpHandler do
   def init(opts), do: opts
 
   def call(conn, _opts) do
-    forward_request(conn)
+    conn
+    |> forward_request
     |> cache_response
-    |> forward_response(conn)
+    |> forward_response
   end
 
   defp forward_request(conn) do
-    url     = Tools.construct_url(conn)
-    method  = Tools.construct_method(conn)
-    body    = Tools.construct_body(conn)
-    headers = Tools.construct_headers(conn)
+    url     = conn.assigns.url
+    method  = conn.assigns.method
+    body    = conn.assigns.body
+    headers = conn.assigns.headers
 
     Logger.info("HTTP -- #{conn.method} -- #{url}")
 
     case HTTPoison.request(method, url, body, headers) do
       {:ok, response} ->
-        {url, response, conn.method}
+        assign(conn, :response, response)
       {:error, %{reason: reason}} ->
-        {:error, reason, url}
+        assign(conn, :error, reason)
     end
   end
 
-  def cache_response({:error, reason}), do: {:error, reason}
-  def cache_response({url, response, "GET"}) do
-    Cache.save(url, response)
-    response
-  end
-  def cache_response({_, response, _}), do: response
+  def cache_response(%Plug.Conn{assigns: %{error: _}} = conn), do: conn
+  def cache_response(%Plug.Conn{method: "GET"} = conn) do
+    Cache.save(conn.assigns.url, conn.assigns.response)
 
-  def forward_response({:error, reason, url}, conn) do
-    Logger.info("HTTP -- Remote error #{url} -- #{reason}")
+    conn
+  end
+  def cache_response(conn), do: conn
+
+  def forward_response(%Plug.Conn{assigns: %{error: reason}} = conn) do
+    Logger.info("HTTP -- Remote error #{conn.assigns.url} -- #{reason}")
+
     conn
     |> send_resp(500, "Something went wrong: #{inspect(reason)}")
     |> halt
   end
-  def forward_response(response, conn) do
+  def forward_response(%Plug.Conn{assigns: %{response: response}} = conn) do
     headers = Tools.alter_resp_headers(response.headers)
     body = response.body
     status_code = response.status_code
