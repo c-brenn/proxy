@@ -1,11 +1,17 @@
 defmodule Proxy.Router do
   use Plug.Builder
-  alias Proxy.{HttpHandler, HttpsHandler, Blacklist}
+  alias Proxy.{
+    HttpHandler,
+    HttpsHandler,
+    Blacklist,
+    CacheLookup,
+  }
   require Logger
 
   plug Plug.Logger
   plug Blacklist
   plug HttpsHandler
+  plug CacheLookup
   plug HttpHandler
 
   def init(opts), do: opts
