@@ -27,7 +27,42 @@ defmodule Proxy.Cache do
   end
 
   def handle_cast({:save, url, data}, cache) do
-    :ets.insert(cache, {url, data})
+    Enum.find(data.headers, fn({key, _}) -> String.downcase(key) == "cache-control" end)
+    |> choose_cache_strategy(url, data)
+
     {:noreply, cache}
   end
+
+  defp choose_cache_strategy(nil, _, _), do: nil
+  defp choose_cache_strategy({_, header}, url, data) do
+    if Regex.match?(~r/(must-revalidate)|(no-cache)/i, header) do
+      Logger.info("CACHE -- UNABLE TO CACHE: #{url} --  'must-revalidate' or 'no-cache' header set")
+    else
+      check_age_and_cache(header, url, data)
+    end
+  end
+
+  defp check_age_and_cache(header, url, data) do
+    case Regex.run(~r/max-age=(\d+)/, header) do
+      [_, age] ->
+        {age, _} = Integer.parse(age)
+        expire_entry_in(url,age)
+        :ets.insert(:http_cache, {url, {:valid, data}})
+       _ ->
+        :ets.insert(:http_cache, {url, {:requires_check, data}})
+    end
+
+  end
+
+  defp expire_entry_in(url, age) do
+    Process.send_after(self, {:expire, url}, age)
+  end
+
+  def handle_info({:expire, url}, cache) do
+    Logger.info("CACHE -- LOCAL ENTRY EXPIRY: #{url}")
+    :ets.delete(cache, url)
+    {:noreply, cache}
+  end
+  def handle_info(_, cache), do: {:noreply, cache}
+
 end

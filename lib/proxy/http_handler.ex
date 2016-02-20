@@ -1,6 +1,7 @@
 defmodule Proxy.HttpHandler do
   alias Proxy.{Cache, Tools}
   import Plug.Conn
+  require Logger
 
   def init(opts), do: opts
 
@@ -16,16 +17,30 @@ defmodule Proxy.HttpHandler do
     body    = Tools.construct_body(conn)
     headers = Tools.construct_headers(conn)
 
-    {:ok, response} = HTTPoison.request(method, url, body, headers)
-    {url, response}
+    Logger.info("HTTP -- #{conn.method} -- #{url}")
+
+    case HTTPoison.request(method, url, body, headers) do
+      {:ok, response} ->
+        {url, response, conn.method}
+      {:error, %{reason: reason}} ->
+        {:error, reason, url}
+    end
   end
 
-  defp cache_response({url, response}) do
+  def cache_response({:error, reason}), do: {:error, reason}
+  def cache_response({url, response, "GET"}) do
     Cache.save(url, response)
     response
   end
+  def cache_response({_, response, _}), do: response
 
-  defp forward_response(response, conn) do
+  def forward_response({:error, reason, url}, conn) do
+    Logger.info("HTTP -- Remote error #{url} -- #{reason}")
+    conn
+    |> send_resp(500, "Something went wrong: #{inspect(reason)}")
+    |> halt
+  end
+  def forward_response(response, conn) do
     headers = Tools.alter_resp_headers(response.headers)
     body = response.body
     status_code = response.status_code

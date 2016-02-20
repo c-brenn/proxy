@@ -8,7 +8,7 @@ defmodule Proxy.Router do
   }
   require Logger
 
-  plug Plug.Logger
+  # plug Plug.Logger
   plug Blacklist
   plug HttpsHandler
   plug CacheLookup
