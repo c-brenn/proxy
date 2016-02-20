@@ -1,5 +1,5 @@
 defmodule Proxy.HttpHandler do
-  alias Proxy.{Cache, Tools}
+  alias Proxy.{Cache, Shared}
   import Plug.Conn
   require Logger
 
@@ -44,7 +44,7 @@ defmodule Proxy.HttpHandler do
     |> halt
   end
   def forward_response(%Plug.Conn{assigns: %{response: response}} = conn) do
-    headers = Tools.alter_resp_headers(response.headers)
+    headers = Shared.alter_resp_headers(response.headers)
     body = response.body
     status_code = response.status_code
 
