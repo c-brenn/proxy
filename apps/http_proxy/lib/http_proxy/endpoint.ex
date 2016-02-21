@@ -19,6 +19,8 @@ defmodule HttpProxy.Endpoint do
   def init(opts), do: opts
 
   def start_link do
-    {:ok, _} = Plug.Adapters.Cowboy.http(__MODULE__, [], port: 8080)
+    port = 8080
+    Logger.info("Running #{inspect(__MODULE__)} on port #{port}")
+    {:ok, _} = Plug.Adapters.Cowboy.http(__MODULE__, [], port: port)
   end
 end

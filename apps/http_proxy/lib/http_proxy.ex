@@ -14,9 +14,4 @@ defmodule HttpProxy do
     opts = [strategy: :one_for_one, name: HttpProxy.Supervisor]
     Supervisor.start_link(children, opts)
   end
-
-  def serve(_) do
-    start([], [])
-    :timer.sleep(:infinity)
-  end
 end

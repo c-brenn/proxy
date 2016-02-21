@@ -22,7 +22,7 @@ defmodule Proxy.SSLTunnel do
     {:ok, pid} = Task.Supervisor.start_child(
       Proxy.SSLSupervisor,
       fn -> SSLStream.stream(to, from, self()) end)
-    :ok = :gen_tcp.controlling_process(from, pid)
+    :gen_tcp.controlling_process(from, pid)
   end
 
   defp close_tunnel(%Plug.Conn{assigns: %{ssl_connection_status: :error}} = conn), do: conn
