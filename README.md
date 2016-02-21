@@ -12,4 +12,4 @@ At the time of writing, it does not conform to RFC standard.
 
 ## Running It
 
-Use `mix serve` to start the proxy server on port 8080.
+Use `mix proxy.server` to start the proxy server on port 8080.
