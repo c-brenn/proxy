@@ -2,7 +2,7 @@ defmodule AdminConsole.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "rooms:*", AdminConsole.RoomChannel
+  channel "events:*", AdminConsole.EventChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
