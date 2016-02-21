@@ -1,6 +1,6 @@
 defmodule HttpProxy.Cache do
   use GenServer
-  require Logger
+  alias HttpProxy.Logger
 
   # Public API
 

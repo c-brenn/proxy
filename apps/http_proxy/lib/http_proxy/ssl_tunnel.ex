@@ -1,6 +1,6 @@
 defmodule HttpProxy.SSLTunnel do
-  alias HttpProxy.SSLStream
-  require Logger
+  alias HttpProxy.{SSLStream, Logger}
+  import Plug.Conn
 
   def tunnel_traffic(conn) do
     conn
@@ -22,7 +22,7 @@ defmodule HttpProxy.SSLTunnel do
     {:ok, pid} = Task.Supervisor.start_child(
       HttpProxy.SSLSupervisor,
       fn -> SSLStream.stream(to, from, self()) end)
-    :ok = :gen_tcp.controlling_process(from, pid)
+    :gen_tcp.controlling_process(from, pid)
   end
 
   defp close_tunnel(%Plug.Conn{assigns: %{ssl_connection_status: :error}} = conn), do: conn

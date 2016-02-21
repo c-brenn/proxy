@@ -1,7 +1,6 @@
 defmodule HttpProxy.HttpHandler do
-  alias HttpProxy.{Cache, Shared}
+  alias HttpProxy.{Cache, Shared, Logger}
   import Plug.Conn
-  require Logger
 
   def init(opts), do: opts
 

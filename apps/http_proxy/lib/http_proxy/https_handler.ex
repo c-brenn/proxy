@@ -1,7 +1,6 @@
 defmodule HttpProxy.HttpsHandler do
   import Plug.Conn
-  alias HttpProxy.SSLTunnel
-  require Logger
+  alias HttpProxy.{SSLTunnel, Logger}
 
   def init(opts), do: opts
 

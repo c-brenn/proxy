@@ -1,7 +1,6 @@
 defmodule HttpProxy.CacheLookup do
   import Plug.Conn
-  alias HttpProxy.{Cache, Shared}
-  require Logger
+  alias HttpProxy.{Cache, Shared, Logger}
 
   def init(opts), do: opts
   def call(%Plug.Conn{method: "GET"} = conn, _opts) do

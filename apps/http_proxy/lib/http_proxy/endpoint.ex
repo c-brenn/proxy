@@ -5,14 +5,13 @@ defmodule HttpProxy.Endpoint do
     HttpsHandler,
     Blacklist,
     CacheLookup,
-    HttpSetup
+    HttpSetup,
+    Logger
   }
-  require Logger
 
-  # plug Plug.Logger
+  plug HttpSetup
   plug Blacklist
   plug HttpsHandler
-  plug HttpSetup
   plug CacheLookup
   plug HttpHandler
 
@@ -20,7 +19,6 @@ defmodule HttpProxy.Endpoint do
 
   def start_link do
     port = 8080
-    Logger.info("Running #{inspect(__MODULE__)} on port #{port}")
     {:ok, _} = Plug.Adapters.Cowboy.http(__MODULE__, [], port: port)
   end
 end
