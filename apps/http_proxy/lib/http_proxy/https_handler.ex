@@ -25,17 +25,17 @@ defmodule HttpProxy.HttpsHandler do
   end
 
   defp open_remote_connection(conn) do
-    [host, port] = String.split(conn.request_path, ":")
-    host = String.to_char_list(host)
+    [bin_host, port] = String.split(conn.request_path, ":")
+    host = String.to_char_list(bin_host)
     port = String.to_integer(port)
 
     {status, sock} = case :gen_tcp.connect(host, port, [:binary, active: false]) do
       {:ok, socket} ->
         :gen_tcp.send(conn.assigns.client_socket, "HTTP/1.1 200 Connection established\r\n\r\n")
-        Logger.info("HTTPS -- SSL TUNNEL OPENED -- #{host}")
+        Logger.info(" Opened -- #{host}", "SSL Tunnel", bin_host)
         {:ok, socket}
       _ ->
-        Logger.error("HTTPS -- SSL CONNECTION ERROR -- #{host}")
+        Logger.error(" -- SSL connection error: #{host}", "Error", bin_host)
         {:error, nil}
     end
 

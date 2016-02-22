@@ -17,7 +17,7 @@ defmodule HttpProxy.HttpHandler do
     body    = conn.assigns.body
     headers = conn.assigns.headers
 
-    Logger.info("HTTP -- #{conn.method} -- #{url}")
+    Logger.info("#{conn.method} -- #{url}", "HTTP Request", url)
 
     case HTTPoison.request(method, url, body, headers) do
       {:ok, response} ->
@@ -36,7 +36,7 @@ defmodule HttpProxy.HttpHandler do
   def cache_response(conn), do: conn
 
   def forward_response(%Plug.Conn{assigns: %{error: reason}} = conn) do
-    Logger.info("HTTP -- Remote error #{conn.assigns.url} -- #{reason}")
+    Logger.info("Remote error #{conn.assigns.url} -- #{reason}", "Error")
 
     conn
     |> send_resp(500, "Something went wrong: #{inspect(reason)}")

@@ -35,8 +35,8 @@ defmodule HttpProxy.Cache do
 
   defp choose_cache_strategy(nil, _, _), do: nil
   defp choose_cache_strategy({_, header}, url, data) do
-    if Regex.match?(~r/(must-revalidate)|(no-cache)/i, header) do
-      Logger.info("CACHE -- UNABLE TO CACHE: #{url} --  'must-revalidate' or 'no-cache' header set")
+    if Regex.match?(~r/(must-revalidate)|(no-cache)|(no-store)/i, header) do
+      Logger.info("#{url} --  'must-revalidate' or 'no-cache' header set", "Cache Miss")
     else
       check_age_and_cache(header, url, data)
     end
@@ -59,7 +59,7 @@ defmodule HttpProxy.Cache do
   end
 
   def handle_info({:expire, url}, cache) do
-    Logger.info("CACHE -- LOCAL ENTRY EXPIRY: #{url}")
+    Logger.info("local entry expiry: #{url}", "Cache Expiry")
     :ets.delete(cache, url)
     {:noreply, cache}
   end

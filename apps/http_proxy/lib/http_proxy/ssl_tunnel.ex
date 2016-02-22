@@ -29,7 +29,7 @@ defmodule HttpProxy.SSLTunnel do
   defp close_tunnel(conn) do
     receive do
       :connection_closed ->
-        Logger.info("HTTPS -- SSL TUNNEL CLOSED -- #{conn.assigns.host}")
+        Logger.info("#{conn.assigns.host}", "SSL Closed")
         conn
     end
   end

@@ -21,7 +21,15 @@ defmodule AdminConsole.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {AdminConsole, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext]]
+     applications: [
+       :phoenix,
+       :phoenix_html,
+       :cowboy,
+       :logger,
+       :gettext,
+       :http_proxy
+     ]
+   ]
   end
 
   # Specifies which paths to compile per environment.
@@ -36,6 +44,8 @@ defmodule AdminConsole.Mixfile do
      {:phoenix_html, "~> 2.3"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:http_proxy, in_umbrella: true}
+   ]
   end
 end

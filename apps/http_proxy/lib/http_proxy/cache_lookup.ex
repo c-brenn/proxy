@@ -37,7 +37,7 @@ defmodule HttpProxy.CacheLookup do
   end
 
   defp serve_cached_response(conn) do
-    Logger.info("CACHE -- HIT -- #{conn.assigns.url}")
+    Logger.info("#{conn.assigns.url}", "Cache Hit")
 
     %{body: body, headers: headers, status_code: status_code} = conn.assigns.response
     headers = Shared.alter_resp_headers(headers)
@@ -60,10 +60,10 @@ defmodule HttpProxy.CacheLookup do
 
     conn = case HTTPoison.get(url, [{"If-None-Match", etag}]) do
       {:ok, %{status_code: 304}} ->
-        Logger.info("CACHE -- CHECKING ETAG -- Not modified: #{url}")
+        Logger.info("Checking ETAG -- Not modified: #{url}", "Cache Hit")
         assign(conn, :response, cached_response)
       {:ok, response} ->
-        Logger.info("CACHE -- CHECKING ETAG -- Modified and re-requested: #{url}")
+        Logger.info("Checking ETAG -- Modified and re-requested: #{url}", "Cache Miss")
         conn
         |> assign(:response, response)
         |> HttpProxy.HttpHandler.cache_response
